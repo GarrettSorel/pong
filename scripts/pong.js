@@ -5,6 +5,7 @@ function Game() {
   this.height = canvas.height;
   this.context = canvas.getContext("2d");
   this.context.fillStyle = "white";
+  this.keys = new KeyListener();
 
   //Paddle variables
   this.p1 = new Paddle(5, 0);
@@ -33,6 +34,12 @@ Game.prototype.draw = function() {
 Game.prototype.update = function() {
   if (this.paused)
     return;
+
+  if (this.keys.isPressed(40)) {
+      this.p2.y = Math.min(this.height - this.p2.height, this.p2.y + 4);
+  } else if (this.keys.isPressed(38)) {
+      this.p2.y = Math.max(0, this.p2.y - 4);
+  }
 
     this.ball.update();
     if (this.ball.x > this.width || this.ball.x + this.ball.width < 0) {
@@ -71,6 +78,34 @@ Ball.prototype.update = function() {
 Ball.prototype.draw = function(p) {
   p.fillRect(this.x, this.y, this.width, this.height);
 }
+
+function KeyListener() {
+    this.pressedKeys = [];
+
+    this.keydown = function(e) {
+        this.pressedKeys[e.keyCode] = true;
+    };
+
+    this.keyup = function(e) {
+        this.pressedKeys[e.keyCode] = false;
+    };
+
+    document.addEventListener("keydown", this.keydown.bind(this));
+    document.addEventListener("keyup", this.keyup.bind(this));
+}
+
+KeyListener.prototype.isPressed = function(key)
+{
+    return this.pressedKeys[key] ? true : false;
+};
+
+KeyListener.prototype.addKeyPressListener = function(keyCode, callback)
+{
+    document.addEventListener("keypress", function(e) {
+        if (e.keyCode == keyCode)
+            callback(e);
+    });
+};
 
 //Initialize our game instance
 var game = new Game();
