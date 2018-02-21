@@ -6,8 +6,8 @@ function Game() {
     this.context.fillStyle = "white";
     this.keys = new KeyListener();
 
-    this.p1 = new Paddle(5, 0);
-    this.p1.y = this.height/2 - this.p1.height/2;
+    this.computer = new Paddle(5, 0);
+    this.computer.y = this.height/2 - this.computer.height/2;
     this.display1 = new Display(this.width/4, 25);
     this.p2 = new Paddle(this.width - 5 - 2, 0);
     this.p2.y = this.height/2 - this.p2.height/2;
@@ -27,7 +27,7 @@ Game.prototype.draw = function()
 
     this.ball.draw(this.context);
 
-    this.p1.draw(this.context);
+    this.computer.draw(this.context);
     this.p2.draw(this.context);
     this.display1.draw(this.context);
     this.display2.draw(this.context);
@@ -39,15 +39,8 @@ Game.prototype.update = function()
         return;
 
     this.ball.update();
-    this.display1.value = this.p1.score;
+    this.display1.value = this.computer.score;
     this.display2.value = this.p2.score;
-
-    // To which Y direction the paddle is moving
-    if (this.keys.isPressed(83)) { // DOWN
-        this.p1.y = Math.min(this.height - this.p1.height, this.p1.y + 4);
-    } else if (this.keys.isPressed(87)) { // UP
-        this.p1.y = Math.max(0, this.p1.y - 4);
-    }
 
     if (this.keys.isPressed(40)) { // DOWN
         this.p2.y = Math.min(this.height - this.p2.height, this.p2.y + 4);
@@ -69,15 +62,21 @@ Game.prototype.update = function()
             }
         }
     } else {
-        if (this.p1.x + this.p1.width >= this.ball.x) {
-            var collisionDiff = this.p1.x + this.p1.width - this.ball.x;
+        if (this.computer.y + this.computer.width >= this.ball.x) {
+            var collisionDiff = this.computer.x + this.computer.width - this.ball.x;
             var k = collisionDiff/-this.ball.vx;
             var y = this.ball.vy*k + (this.ball.y - this.ball.vy);
-            if (y >= this.p1.y && y + this.ball.height <= this.p1.y + this.p1.height) {
+            if (y >= this.computer.y && y + this.ball.height <= this.computer.y + this.computer.height) {
                 // collides with the left paddle
-                this.ball.x = this.p1.x + this.p1.width;
+                this.ball.x = this.computer.x + this.computer.width;
                 this.ball.y = Math.floor(this.ball.y - this.ball.vy + this.ball.vy*k);
                 this.ball.vx = -this.ball.vx;
+            }
+
+            if (this.computer.y < this.ball.y) {
+              this.computer.y = this.computer.y + 2.5;
+            } else if (this.computer.y > this.ball.y) {
+              this.computer.y = this.computer.y - 2.5;
             }
         }
     }
@@ -89,7 +88,7 @@ Game.prototype.update = function()
     }
 
     if (this.ball.x >= this.width)
-        this.score(this.p1);
+        this.score(this.computer);
     else if (this.ball.x + this.ball.width <= 0)
         this.score(this.p2);
 };
@@ -98,7 +97,7 @@ Game.prototype.score = function(p)
 {
     // player scores
     p.score++;
-    var player = p == this.p1 ? 0 : 1;
+    var player = p == this.computer ? 0 : 1;
 
     // set ball position
     this.ball.x = this.width/2;
@@ -125,7 +124,6 @@ Paddle.prototype.draw = function(p)
 {
     p.fillRect(this.x, this.y, this.width, this.height);
 };
-
 
 // BALL
 function Ball() {
