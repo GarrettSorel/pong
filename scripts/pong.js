@@ -73,10 +73,10 @@ Game.prototype.update = function()
                 this.ball.vx = -this.ball.vx;
             }
 
-            if (this.computer.y < this.ball.y) {
-              this.computer.y = this.computer.y + 2.5;
-            } else if (this.computer.y > this.ball.y) {
-              this.computer.y = this.computer.y - 2.5;
+            if (this.computer.y <= this.ball.y) {
+              this.computer.y = this.computer.y + 2;
+            } else if (this.computer.y >= this.ball.y) {
+              this.computer.y = this.computer.y - 2;
             }
         }
     }
@@ -95,6 +95,7 @@ Game.prototype.update = function()
 
 Game.prototype.score = function(p)
 {
+
     // player scores
     p.score++;
     var player = p == this.computer ? 0 : 1;
@@ -108,6 +109,16 @@ Game.prototype.score = function(p)
     this.ball.vx = 7 - Math.abs(this.ball.vy);
     if (player == 1)
         this.ball.vx *= -1;
+
+    if (this.p2.score == 11) {
+      alert("You Win! Refresh the page to play again!");
+      this.computer.score = 0;
+      this.p2.score = 0;
+    } else if (this.computer.score == 11) {
+      alert("Game Over! Refresh the page to try again!");
+      this.computer.score = 0;
+      this.p2.score = 0;
+    }
 };
 
 
@@ -146,7 +157,6 @@ Ball.prototype.draw = function(p)
     p.fillRect(this.x, this.y, this.width, this.height);
 };
 
-
 //DISPLAY
 function Display(x, y) {
     this.x = x;
@@ -158,7 +168,6 @@ Display.prototype.draw = function(p)
 {
     p.fillText(this.value, this.x, this.y);
 };
-
 
 // KEY LISTENER
 function KeyListener() {
