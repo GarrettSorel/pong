@@ -42,6 +42,7 @@ Game.prototype.update = function()
     this.display1.value = this.computer.score;
     this.display2.value = this.p2.score;
 
+
     if (this.keys.isPressed(40)) { // DOWN
         this.p2.y = Math.min(this.height - this.p2.height, this.p2.y + 4);
     } else if (this.keys.isPressed(38)) { // UP
@@ -62,7 +63,7 @@ Game.prototype.update = function()
             }
         }
     } else {
-        if (this.computer.y + this.computer.width >= this.ball.x) {
+        if (this.computer.x + this.computer.width >= this.ball.x) {
             var collisionDiff = this.computer.x + this.computer.width - this.ball.x;
             var k = collisionDiff/-this.ball.vx;
             var y = this.ball.vy*k + (this.ball.y - this.ball.vy);
@@ -72,12 +73,12 @@ Game.prototype.update = function()
                 this.ball.y = Math.floor(this.ball.y - this.ball.vy + this.ball.vy*k);
                 this.ball.vx = -this.ball.vx;
             }
+        }
 
-            if (this.computer.y <= this.ball.y) {
-              this.computer.y = this.computer.y + 2;
-            } else if (this.computer.y >= this.ball.y) {
-              this.computer.y = this.computer.y - 2;
-            }
+        if (this.computer.y <= this.ball.y) {
+          this.computer.y = this.computer.y + 2;
+        } else if (this.computer.y >= this.ball.y) {
+          this.computer.y = this.computer.y - 2;
         }
     }
 
@@ -95,7 +96,6 @@ Game.prototype.update = function()
 
 Game.prototype.score = function(p)
 {
-
     // player scores
     p.score++;
     var player = p == this.computer ? 0 : 1;
